@@ -6,7 +6,7 @@ const getAllUsers = async(req,res)=>{
 }
 
 const createUser = async (userData)=>{
-    const {nom, email, password, role, status} = userData;
+    const {nom, email, password, role, statut} = userData;
     if(!email){
       throw new Error("enter the Email");
     }
@@ -27,7 +27,7 @@ const createUser = async (userData)=>{
         password : hashedPassword,
         email,
         role,
-        status
+        statut
     })
 
     return newUser;
