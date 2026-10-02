@@ -55,7 +55,7 @@ const updateCamion = async (id, camionData)=>{
 }
 
 const deleteCamion = async (id)=>{
-  const camion = Camion.findByIdAndDelete(id);
+  const camion = await Camion.findByIdAndDelete(id);
   if(!camion){
     throw new Error("Camion not found");
   }

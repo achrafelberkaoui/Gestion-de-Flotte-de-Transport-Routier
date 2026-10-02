@@ -4,6 +4,7 @@ const connectDB = require("./src/config/database");
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const camionRoutes = require("./src/routes/camionRoutes");
+const remorqueRoutes = require("./src/routes/remorqueRoutes");
 
 dotenv.config();
 const app = express();
@@ -12,7 +13,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/camion", camionRoutes);
-
+app.use("/api/remorque", remorqueRoutes);
 
 app.get("/", (req, res) => {
   res.json({
