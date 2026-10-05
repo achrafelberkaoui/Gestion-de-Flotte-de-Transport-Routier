@@ -2,12 +2,13 @@ const camionService = require("../services/camionService");
 
 const getAllCamions = async (req, res) => {
   try {
-    const result = await camionService.getAllCamions();
+    const result = await camionService.getAllCamions(req.query);
     res.status(200).json({
-      result,
+      count : result.length,
+      camion : result,
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Failed to retrieve camions",
     });
   }

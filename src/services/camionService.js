@@ -1,10 +1,29 @@
 const Camion = require("../models/Camion");
 
-const getAllCamions = async()=>{
-  const camions = await Camion.find();
+const getAllCamions = async (filtres = {}) => {
+  const { marque, matricule, statut } = filtres;
+
+  const query = {};
+  if (marque) {
+    query.marque = {
+      $regex: marque,
+      $options: "i",
+    };
+  }
+  if (matricule) {
+    query.matricule = {
+      $regex: matricule,
+      $options: "i",
+    };
+  }
+  if (statut) {
+    query.statut = statut;
+  }
+
+  const camions = await Camion.find(query);
 
   return camions;
-}
+};
 
 const createCamion = async (camionData) => {
   const { matricule, marque, modele, kilometrage } = camionData;
@@ -37,35 +56,38 @@ const createCamion = async (camionData) => {
   return camion;
 };
 
-const getCamion = async (id)=>{
+const getCamion = async (id) => {
   const camion = await Camion.findById(id);
-  if(!camion){
-    throw new Error("Camion not found");
-  }
-  return camion
-}
-
-const updateCamion = async (id, camionData)=>{
-  const camion = Camion.findByIdAndUpdate(id, camionData, {new : true, runValidators : true});
-
-  if(!camion){
+  if (!camion) {
     throw new Error("Camion not found");
   }
   return camion;
-}
+};
 
-const deleteCamion = async (id)=>{
+const updateCamion = async (id, camionData) => {
+  const camion = Camion.findByIdAndUpdate(id, camionData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!camion) {
+    throw new Error("Camion not found");
+  }
+  return camion;
+};
+
+const deleteCamion = async (id) => {
   const camion = await Camion.findByIdAndDelete(id);
-  if(!camion){
+  if (!camion) {
     throw new Error("Camion not found");
   }
   return camion;
-}
+};
 
 module.exports = {
   createCamion,
   getAllCamions,
   getCamion,
   updateCamion,
-  deleteCamion
+  deleteCamion,
 };
