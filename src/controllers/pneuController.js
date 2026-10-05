@@ -19,7 +19,7 @@ const createPneu = async (req, res) => {
 // READ ALL
 const getAllPneus = async (req, res) => {
   try {
-    const pneus = await pneuService.getAllPneus();
+    const pneus = await pneuService.getAllPneus(req.query);
 
     res.status(200).json({
       pneus,

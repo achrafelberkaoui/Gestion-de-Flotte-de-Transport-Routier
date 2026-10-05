@@ -47,8 +47,32 @@ const createPneu = async (pneuData) => {
 };
 
 // READ ALL
-const getAllPneus = async () => {
-  const pneus = await Pneu.find().populate("camion", "matricule marque modele");
+const getAllPneus = async (filters = {}) => {
+  const { reference, marque, etat } = filters;
+  const query = {};
+
+  if (reference) {
+    query.reference = {
+      $regex: reference,
+      $options: "i",
+    };
+  }
+
+  if (marque) {
+    query.marque = {
+      $regex: marque,
+      $options: "i",
+    };
+  }
+
+  if (etat) {
+    query.etat = etat;
+  }
+
+  const pneus = await Pneu.find(query).populate(
+    "camion",
+    "matricule marque modele",
+  );
 
   return pneus;
 };

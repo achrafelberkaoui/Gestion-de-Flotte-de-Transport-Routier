@@ -27,8 +27,30 @@ const createRemorque = async (remorqueData) => {
 };
 
 // READ ALL
-const getAllRemorques = async () => {
-  const remorques = await Remorque.find();
+const getAllRemorques = async (filters = {}) => {
+  const { type, statut, matricule } = filters;
+
+  const query = {};
+
+  if (type) {
+    query.type = {
+      $regex: type,
+      $options: "i",
+    };
+  }
+
+  if (statut) {
+    query.statut = statut;
+  }
+
+  if (matricule) {
+    query.matricule = {
+      $regex: matricule,
+      $options: "i",
+    };
+  }
+
+  const remorques = await Remorque.find(query);
 
   return remorques;
 };

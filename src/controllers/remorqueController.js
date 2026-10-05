@@ -19,7 +19,7 @@ const createRemorque = async (req, res) => {
 // READ ALL
 const getAllRemorques = async (req, res) => {
   try {
-    const remorques = await remorqueService.getAllRemorques();
+    const remorques = await remorqueService.getAllRemorques(req.query);
 
     res.status(200).json({
       remorques,
