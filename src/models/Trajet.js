@@ -23,6 +23,23 @@ const trajetSchema = new mongoose.Schema(
       type: Date,
     },
 
+    kilometrageDepart: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    kilometrageArrivee: {
+      type: Number,
+      min: 0,
+    },
+
+    carburantConsomme: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
     camion: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Camion",

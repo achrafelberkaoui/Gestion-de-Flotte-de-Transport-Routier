@@ -27,7 +27,7 @@ const createTrajet = async (dataTrajet) => {
   if (trajetCamionActif) {
     throw new Error("Camion already has an active trajet");
   }
-
+  const kilometrageDepart = existingCamion.kilometrage;
   const existingRemorque = await Remorque.findById(remorque);
 
   if (!existingRemorque) {
@@ -67,6 +67,7 @@ const createTrajet = async (dataTrajet) => {
     origine,
     destination,
     dateDepart,
+    kilometrageDepart,
     camion,
     remorque,
     chauffeur,
@@ -133,9 +134,54 @@ const updateTrajet = async (id, dataTrajet) => {
     .populate("chauffeur", "nom email role statut");
 };
 
+const terminerTrajet = async (id, kilometrageArrive, carburantConsomme) => {
+  const trajet = await Trajet.findById(id);
+
+  if (!trajet) {
+    throw new Error("Trajet Not Found");
+  }
+
+  if (trajet.kilometrageDepart >= kilometrageArrive) {
+    throw new Error("Arrival mileage must be greater than departure mileage");
+  }
+
+  if (carburantConsomme < 0) {
+    throw new Error("Fuel consumption cannot be negative");
+  }
+
+  const camion = await Camion.findById(trajet.camion);
+  if (!camion) {
+    throw new Error("Camion not found");
+  }
+
+  trajet.kilometrageArrivee = kilometrageArrive;
+  trajet.carburantConsomme = carburantConsomme;
+  trajet.dateArrivee = Date.now();
+  trajet.statut = "termine";
+  camion.kilometrage = kilometrageArrive;
+
+  const distance = trajet.kilometrageArrivee - trajet.kilometrageDepart;
+  const consommation = (trajet.carburantConsomme / distance) * 100;
+
+  await trajet.save();
+  await camion.save();
+
+  const resultatTrajet = await Trajet.findById(id)
+    .populate("camion", "matricule marque modele staut kilometrage")
+    .populate("remorque", "matricule type statut")
+    .populate("chauffeur", "nom email role statut");
+
+  return {
+    resultatTrajet,
+    distance,
+    consommation,
+  };
+};
+
 module.exports = {
   createTrajet,
   getAllTrajets,
   getTrajetById,
-  updateTrajet
+  updateTrajet,
+  terminerTrajet,
 };

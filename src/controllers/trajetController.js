@@ -61,9 +61,29 @@ const updateTrajet = async (req, res) => {
   }
 };
 
+const terminerTrajet = async (req, res) => {
+  try {
+    const trajet = await trajetService.terminerTrajet(
+      req.params.id,
+      req.body.kilometrageArrivee,
+      req.body.carburantConsomme,
+    );
+
+    res.status(200).json({
+      message: "Trajet completed successfully",
+      trajet ,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createTrajet,
   getAllTrajets,
   getTrajetById,
-  updateTrajet
+  updateTrajet,
+  terminerTrajet,
 };
