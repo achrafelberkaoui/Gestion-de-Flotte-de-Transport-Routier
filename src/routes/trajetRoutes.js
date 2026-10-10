@@ -16,5 +16,5 @@ router.get("/",authenticate,authorize("admin"),trajetController.getAllTrajets);
 router.get("/:id",authenticate,authorize("admin"),trajetController.getTrajetById);
 router.put("/:id",authenticate,authorize("driver", "admin"), validate(updateTrajetSchema), trajetController.updateTrajet);
 router.put("/:id/terminer",authenticate,authorize("driver", "admin"), validate(terminateTrajetSchema), trajetController.terminerTrajet);
-
+router.get( "/:id/pdf", authenticate, authorize("admin", "driver"), trajetController.telechargerPdfTrajet);
 module.exports = router;
