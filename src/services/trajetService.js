@@ -2,6 +2,7 @@ const Trajet = require("../models/Trajet");
 const Camion = require("../models/Camion");
 const User = require("../models/User");
 const Remorque = require("../models/Remorque");
+const maintenanceService = require("./maintenanceService");
 
 const createTrajet = async (dataTrajet) => {
   const { origine, destination, dateDepart, camion, remorque, chauffeur } =
@@ -12,6 +13,7 @@ const createTrajet = async (dataTrajet) => {
   if (!existingCamion) {
     throw new Error("Camion not found");
   }
+  await maintenanceService.verifierBlocageCamion(existingCamion._id);
 
   if (existingCamion.statut !== "disponible") {
     throw new Error("Camion is not available");
@@ -113,10 +115,23 @@ const updateTrajet = async (id, dataTrajet) => {
   const { statut, dateArrivee } = dataTrajet;
 
   if (statut) {
-    const statutsAutorises = ["planifie", "en_cours", "termine", "annule"];
+    const statutsAutorises = {
+      planifie: ["annule", "en_cours"],
+      en_cours: ["annule"],
+      termine: [],
+      annule: [],
+    };
 
-    if (!statutsAutorises.includes(statut)) {
-      throw new Error("Invalid trajet status");
+    if (statut === "termine") {
+      throw new Error(
+        "Utilise l'endpoint terminerTrajet pour terminer le trajet",
+      );
+    }
+
+    const statutPossible = statutsAutorises[trajet.statut] || [];
+
+    if (!statutPossible.includes(statut)) {
+      throw new Error(`Transation Impossible ${trajet.statut} vers ${statut}`);
     }
 
     trajet.statut = statut;
@@ -154,20 +169,22 @@ const terminerTrajet = async (id, kilometrageArrive, carburantConsomme) => {
     throw new Error("Camion not found");
   }
 
+  const distance = kilometrageArrive - trajet.kilometrageDepart;
+  const consommation = (carburantConsomme / distance) * 100;
+  await maintenanceService.mettreAJourUsurePneus(trajet.camion, distance);
+
   trajet.kilometrageArrivee = kilometrageArrive;
   trajet.carburantConsomme = carburantConsomme;
-  trajet.dateArrivee = Date.now();
+  trajet.dateArrivee = new Date();
   trajet.statut = "termine";
   camion.kilometrage = kilometrageArrive;
 
-  const distance = trajet.kilometrageArrivee - trajet.kilometrageDepart;
-  const consommation = (trajet.carburantConsomme / distance) * 100;
-
   await trajet.save();
   await camion.save();
+  await maintenanceService.verifierMaintenance(camion._id);
 
   const resultatTrajet = await Trajet.findById(id)
-    .populate("camion", "matricule marque modele staut kilometrage")
+    .populate("camion", "matricule marque modele statut kilometrage")
     .populate("remorque", "matricule type statut")
     .populate("chauffeur", "nom email role statut");
 

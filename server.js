@@ -7,6 +7,7 @@ const camionRoutes = require("./src/routes/camionRoutes");
 const remorqueRoutes = require("./src/routes/remorqueRoutes");
 const pneuRoutes = require("./src/routes/pneuRoutes");
 const trajetRoutes = require("./src/routes/trajetRoutes");
+const maintenanceRoutes = require("./src/routes/maintenanceRoutes");
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,7 @@ app.use("/api/camions", camionRoutes);
 app.use("/api/remorques", remorqueRoutes);
 app.use("/api/pneus", pneuRoutes);
 app.use("/api/trajets", trajetRoutes);
-
+app.use("/api/maintenances", maintenanceRoutes);
 app.get("/", (req, res) => {
   res.json({
     message: "Fleet Management API is running",

@@ -4,8 +4,8 @@ const getAllCamions = async (req, res) => {
   try {
     const result = await camionService.getAllCamions(req.query);
     res.status(200).json({
-      count : result.length,
-      camion : result,
+      count: result.length,
+      camion: result,
     });
   } catch (error) {
     res.status(500).json({
@@ -56,25 +56,25 @@ const updateCamion = async (req, res) => {
   }
 };
 
-const deleteCamion = async(req, res)=>{
+const deleteCamion = async (req, res) => {
   try {
     const camion = await camionService.deleteCamion(req.params.id);
 
     res.status(200).json({
       message: "Camion delete successfully",
-      camion
+      camion,
     });
   } catch (error) {
     res.status(400).json({
       message: error.message,
     });
   }
-}
+};
 
 module.exports = {
   createCamion,
   getAllCamions,
   getCamion,
   updateCamion,
-  deleteCamion
+  deleteCamion,
 };
