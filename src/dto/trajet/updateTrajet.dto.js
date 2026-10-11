@@ -9,7 +9,7 @@ const updateTrajetSchema = Joi.object({
 
   dateArrivee: Joi.date(),
 
-  statut: Joi.string().valid("planifie", "en_cours", "termine", "annule"),
+  statut: Joi.string().valid("planifie", "en_cours", "annule"),
 }).min(1);
 
 module.exports = updateTrajetSchema;
