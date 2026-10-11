@@ -43,9 +43,9 @@ const login = async(email, password)=>{
         role: user.role
     },
     process.env.JWT_SECRET,
-    // {
-    //     expiresIn: "24H"
-    // }
+    {
+        expiresIn: "24H"
+    }
 );
 
     return {
