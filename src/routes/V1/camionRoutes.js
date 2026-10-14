@@ -1,11 +1,11 @@
 const express = require("express");
 
-const camionController = require("../controllers/camionController");
-const authenticate = require("../middleware/authMiddleware");
-const authorize = require("../middleware/roleMiddleware");
-const createCamionSchema = require("../dto/camion/createCamion.dto");
-const updateCamionSchema = require("../dto/camion/updateCamion.dto");
-const validate = require("../middleware/validate");
+const camionController = require("../../controllers/camionController");
+const authenticate = require("../../middleware/authMiddleware");
+const authorize = require("../../middleware/roleMiddleware");
+const createCamionSchema = require("../../dto/camion/createCamion.dto");
+const updateCamionSchema = require("../../dto/camion/updateCamion.dto");
+const validate = require("../../middleware/validate");
 const router = express.Router();
 
 router.post("/",authenticate,authorize("admin"), validate(createCamionSchema),camionController.createCamion);
